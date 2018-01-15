@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\crop\CropInterface;
 use Drupal\crop\EntityProviderNotFoundException;
+use Drupal\image\ImageStyleInterface;
 
 /**
  * Defines the crop entity class.
@@ -130,6 +131,40 @@ class Crop extends ContentEntityBase implements CropInterface {
    */
   public static function findCrop($uri, $type) {
     return \Drupal::entityTypeManager()->getStorage('crop')->getCrop($uri, $type);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getCropFromImageStyle($uri, ImageStyleInterface $image_style) {
+    $effects = [];
+    $crop = FALSE;
+
+    foreach ($image_style->getEffects() as $uuid => $effect) {
+      // Store the effects parameters for later use.
+      $effects[$effect->getPluginId()] = [
+        'uuid' => $uuid,
+        'provider' => $effect->getPluginDefinition()['provider'],
+      ];
+    }
+
+    if (isset($effects['crop_crop']) && $image_style->getEffects()
+        ->has($effects['crop_crop']['uuid'])) {
+      $type = $image_style->getEffect($effects['crop_crop']['uuid'])
+        ->getConfiguration()['data']['crop_type'];
+      $crop = self::findCrop($uri, $type);
+    }
+
+    // Fallback to use the provider as a fallback to check if provider name,
+    // match with crop types for modules non-based on "manual crop" effects.
+    if (!$crop) {
+      foreach ($effects as $effect) {
+        $provider = $effect['provider'];
+        $crop = self::findCrop($uri, $provider);
+      }
+    }
+
+    return $crop;
   }
 
   /**
