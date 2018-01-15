@@ -77,6 +77,8 @@ function crop_form_media_bundle_edit_form_alter(array &$form, FormStateInterface
     '#title' => t('Image field'),
     '#default_value' => $bundle->getThirdPartySetting('crop', 'image_field'),
     '#options' => $options,
+    '#empty_option' => t('- Skip field -'),
+    '#empty_value' => '_none',
     '#description' => t('Select field that stores image which needs to be cropped.'),
   ];
 
