@@ -42,6 +42,11 @@ use Drupal\image\ImageStyleInterface;
  *     "langcode" = "langcode",
  *     "uuid" = "uuid"
  *   },
+ *   revision_metadata_keys = {
+ *     "revision_timestamp" = "revision_timestamp",
+ *     "revision_uid" = "revision_uid",
+ *     "revision_log" = "revision_log"
+ *   },
  *   bundle_entity_type = "crop_type",
  *   permission_granularity = "entity_type",
  *   admin_permission = "administer crop",
