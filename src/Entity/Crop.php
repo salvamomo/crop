@@ -129,16 +129,7 @@ class Crop extends ContentEntityBase implements CropInterface {
    * {@inheritdoc}
    */
   public static function findCrop($uri, $type) {
-    $query = \Drupal::entityQuery('crop')
-      ->condition('uri', $uri);
-    if ($type) {
-      $query->condition('type', $type);
-    }
-    $crop = $query->sort('cid')
-      ->range(0, 1)
-      ->execute();
-
-    return $crop ? \Drupal::entityTypeManager()->getStorage('crop')->load(current($crop)) : NULL;
+    return \Drupal::entityTypeManager()->getStorage('crop')->getCrop($uri, $type);
   }
 
   /**
